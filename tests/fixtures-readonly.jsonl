@@ -1,0 +1,36 @@
+{"expect":"allow","reason":"^auto: read-only shell","why":"ls is silent","input":{"tool_name":"Bash","tool_input":{"command":"ls -la /tmp"}}}
+{"expect":"allow","reason":"^auto: read-only shell","why":"du is silent","input":{"tool_name":"Bash","tool_input":{"command":"du -sh /tmp"}}}
+{"expect":"allow","reason":"^auto: read-only shell","why":"grep is silent","input":{"tool_name":"Bash","tool_input":{"command":"grep -r foo /tmp"}}}
+{"expect":"allow","reason":"^auto: read-only shell","why":"absolute path still resolves verb","input":{"tool_name":"Bash","tool_input":{"command":"/usr/bin/wc -l /tmp/x"}}}
+{"expect":"allow","reason":"^auto: read-only find","why":"plain find is silent","input":{"tool_name":"Bash","tool_input":{"command":"find /tmp -name '*.log'"}}}
+{"expect":"allow","reason":"^auto: read-only git","why":"git status is silent","input":{"tool_name":"Bash","tool_input":{"command":"git status"}}}
+{"expect":"allow","reason":"^auto: read-only git","why":"git log is silent","input":{"tool_name":"Bash","tool_input":{"command":"git log --oneline -20"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: find -delete must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"find /tmp -name x -delete"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: find -exec must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"find /tmp -name x -exec touch {} +"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: sed -i must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"sed -i s/a/b/ /tmp/f"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: awk has system(), must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"awk BEGIN{system(\"id\")}"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: env runs programs, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"env FOO=1 touch /tmp/x"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: command runs programs, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"command touch /tmp/x"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: xargs runs programs, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"xargs touch"}}}
+{"expect":"allow","reason":"^no veto","why":"ls with a redirect is not read-only","input":{"tool_name":"Bash","tool_input":{"command":"ls -la > /tmp/out"}}}
+{"expect":"allow","reason":"^no veto","why":"chained command must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"ls ; touch /tmp/x"}}}
+{"expect":"allow","reason":"^no veto","why":"git push is not read-only","input":{"tool_name":"Bash","tool_input":{"command":"git push origin main"}}}
+{"expect":"allow","reason":"^no veto","why":"mv is not read-only","input":{"tool_name":"Bash","tool_input":{"command":"mv /tmp/a /tmp/b"}}}
+{"expect":"deny","reason":"^hard floor","why":"ESCAPE: ../ must not escape allowed roots","input":{"tool_name":"Write","tool_input":{"file_path":"__GAMES__/../.bashrc"}}}
+{"expect":"deny","reason":"^hard floor","why":"ESCAPE: deep ../ traversal","input":{"tool_name":"Write","tool_input":{"file_path":"__GAMES__/a/b/../../../../etc/passwd"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: sort -o writes, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"sort -o __HOME__/out.txt __HOME__/in.txt"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: uniq with 2 operands writes, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"uniq __HOME__/in.txt __HOME__/out.txt"}}}
+{"expect":"allow","reason":"^auto: read-only sort","why":"plain sort is still silent","input":{"tool_name":"Bash","tool_input":{"command":"sort __HOME__/in.txt"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: git branch NAME creates, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"git branch newthing"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: git remote add mutates, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"git remote add origin url"}}}
+{"expect":"allow","reason":"^auto: bare git","why":"bare git branch listing is silent","input":{"tool_name":"Bash","tool_input":{"command":"git branch"}}}
+{"expect":"allow","reason":"^auto: read-only git","why":"git diff is silent","input":{"tool_name":"Bash","tool_input":{"command":"git diff HEAD"}}}
+{"expect":"allow","reason":"^no veto","why":"REGRESSION: bare git stash mutates, must NOT be silent","input":{"tool_name":"Bash","tool_input":{"command":"git stash"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: sort -oFILE attached form","input":{"tool_name":"Bash","tool_input":{"command":"sort -o__HOME__/out /etc/hosts"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: git diff --output writes","input":{"tool_name":"Bash","tool_input":{"command":"git diff --output=__HOME__/out HEAD"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: git branch --unset-upstream mutates","input":{"tool_name":"Bash","tool_input":{"command":"git branch --unset-upstream"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: git branch --edit-description mutates","input":{"tool_name":"Bash","tool_input":{"command":"git branch --edit-description"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: find -fprint0 writes","input":{"tool_name":"Bash","tool_input":{"command":"find /tmp -name x -fprint0 __HOME__/out"}}}
+{"expect":"allow","reason":"^no veto","why":"HOLE: fd --exec runs programs","input":{"tool_name":"Bash","tool_input":{"command":"fd pattern --exec touch"}}}
+{"expect":"allow","reason":"^auto: read-only git","why":"plain git diff still silent","input":{"tool_name":"Bash","tool_input":{"command":"git diff HEAD"}}}
+{"expect":"allow","reason":"^auto: bare git","why":"bare git remote still silent","input":{"tool_name":"Bash","tool_input":{"command":"git remote"}}}
