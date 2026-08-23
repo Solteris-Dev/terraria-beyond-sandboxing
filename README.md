@@ -1,5 +1,9 @@
 # terraria-beyond-sandboxing
 
+<img width="1106" height="73" alt="image" src="https://github.com/user-attachments/assets/ed7eb56d-3e7a-4604-8482-1dd21465d89b" />
+<img width="1387" height="812" alt="image" src="https://github.com/user-attachments/assets/4ff9347d-76eb-4362-a7e1-f8c64d15b57c" />
+
+
 Ask Claude Code from inside Terraria chat.
 
 ```
