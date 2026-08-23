@@ -1,11 +1,15 @@
 # terraria-beyond-sandboxing
 
-<img width="1106" height="73" alt="Terraria chat showing: PENDING Bash: rm --recursive --force /etc -- type !!! within 2s to deny. The 2s is a test setting; the shipped default is 15s. If nobody types the veto, the command runs." src="https://github.com/user-attachments/assets/ed7eb56d-3e7a-4604-8482-1dd21465d89b" />
+<img width="1106" height="73" alt="Terraria chat showing: PENDING Bash: rm --recursive --force /etc -- type !!! within 2s to deny. That command is now auto-denied by the hard floor and never reaches the veto window; the screenshot predates the fix. The 2s is a test setting; the default is 15s." src="https://github.com/user-attachments/assets/ed7eb56d-3e7a-4604-8482-1dd21465d89b" />
 <img width="1387" height="812" alt="image" src="https://github.com/user-attachments/assets/4ff9347d-76eb-4362-a7e1-f8c64d15b57c" />
 
-<sub>Real output. The `2s` is the test setting — the default window is **15s**.
-And note what the timeout actually does: **no veto means it proceeds.** Silence
-is consent, by design, or the agent would deadlock whenever nobody is looking.</sub>
+<sub>Real output, and a fossil: that exact `rm` is now **auto-denied** by the hard
+floor and never reaches a veto window. The screenshot is from the moment before
+that gap was closed — the regex only matched `-rf`, not `--recursive --force`,
+so it fell through to "announce and wait" instead. The `2s` is a test setting;
+the default is 15s. For commands that *do* reach the veto window, no veto means
+they proceed — silence is consent, or the agent deadlocks whenever nobody is
+looking.</sub>
 
 Ask Claude Code from inside Terraria chat.
 
