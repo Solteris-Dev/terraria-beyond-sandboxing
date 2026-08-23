@@ -1,8 +1,11 @@
 # terraria-beyond-sandboxing
 
-<img width="1106" height="73" alt="image" src="https://github.com/user-attachments/assets/ed7eb56d-3e7a-4604-8482-1dd21465d89b" />
+<img width="1106" height="73" alt="Terraria chat showing: PENDING Bash: rm --recursive --force /etc -- type !!! within 2s to deny. The 2s is a test setting; the shipped default is 15s. If nobody types the veto, the command runs." src="https://github.com/user-attachments/assets/ed7eb56d-3e7a-4604-8482-1dd21465d89b" />
 <img width="1387" height="812" alt="image" src="https://github.com/user-attachments/assets/4ff9347d-76eb-4362-a7e1-f8c64d15b57c" />
 
+<sub>Real output. The `2s` is the test setting — the default window is **15s**.
+And note what the timeout actually does: **no veto means it proceeds.** Silence
+is consent, by design, or the agent would deadlock whenever nobody is looking.</sub>
 
 Ask Claude Code from inside Terraria chat.
 
