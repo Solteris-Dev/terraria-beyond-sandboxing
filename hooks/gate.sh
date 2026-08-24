@@ -211,8 +211,14 @@ SUMMARY="$(head -c 110 <<<"$DETAIL" | tr -d '\n')"
 timeout 8 "$ANNOUNCE" reply "PENDING $TOOL: ${SUMMARY:-<no detail>} -- type $VETO within ${VETO_WINDOW}s to deny" \
   >/dev/null 2>&1 || echo "$(ts)  WARN announce failed/timed out" >> "$AUDIT"
 
+# The console splices its prompt and an ESC[6n cursor query into the log, so a
+# veto typed at the wrong moment is recorded as ": ESC[6n<Player> !!!" and an
+# anchored match misses it -- a fail-OPEN on the one path that must not fail
+# open. Strip the escapes and any junk before the first "<name> " first.
 vetoed() {
   timeout 3 tail -n "+$((MARK + 1))" "$SERVER_LOG" 2>/dev/null \
+    | tr -d '\r' \
+    | sed -e 's/\x1b\[[0-9;?]*[a-zA-Z]//g' -e 's/^[^<]*\(<[^<>]*> \)/\1/' \
     | grep -aE "^<[^>]+> *!!!" | grep -qav "^<Server>"
 }
 

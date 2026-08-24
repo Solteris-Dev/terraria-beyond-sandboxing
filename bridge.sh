@@ -31,8 +31,31 @@ if [ -z "${SERVER_LOG:-}" ]; then
   exit 1
 fi
 ts() { date -Is; }
-say() { "$TSRV" reply "$*" >/dev/null 2>&1 || true; }
 note() { echo "$(ts)  $*" >> "$LOG"; }
+
+# tsrv can fail transiently (server mid-save, console busy). Swallowing the
+# exit code made a lost reply indistinguishable from a delivered one: the
+# bridge logged REPLY either way while the player saw nothing. Retry, and if
+# it still will not go, say so in the log instead of pretending.
+say() {
+  local msg="$*" attempt
+  for attempt in 1 2 3; do
+    if "$TSRV" reply "$msg" >/dev/null 2>&1; then return 0; fi
+    sleep 1
+  done
+  note "SAY FAILED after 3 attempts: $(head -c 120 <<<"$msg")"
+  return 1
+}
+
+# The server console interleaves its own prompt and a cursor-position query
+# (ESC[6n) into the log, so a chat line that lands mid-prompt is recorded as
+#   :  ESC[6n<Player> ! ping
+# rather than at the start of the line. Anchored matches then skip it, which
+# silently drops the request -- and, worse, drops a veto. Strip the escapes
+# and any junk ahead of the first "<name> " before matching.
+sanitize() {
+  sed -e 's/\x1b\[[0-9;?]*[a-zA-Z]//g' -e 's/^[^<]*\(<[^<>]*> \)/\1/'
+}
 
 # A second, independent layer enforced by the CLI itself, so a crashed or
 # mis-edited hook cannot approve these. NOT a containment boundary: like the
@@ -110,6 +133,7 @@ every ~115 characters becomes another chat line. Prefer 1-3 short sentences."
   (
     while kill -0 "$agent" 2>/dev/null; do
       if tail -n "+$((watch_mark + 1))" "$SERVER_LOG" 2>/dev/null \
+           | tr -d '\r' | sanitize \
            | grep -aE "^<[^>]+> *!!!" | grep -qav "^<Server>"; then
         touch "$STATE/interrupted"
         kill -INT -- "-$agent" 2>/dev/null || kill -INT "$agent" 2>/dev/null
@@ -177,7 +201,7 @@ while true; do
       req="${req# }"
       [ -n "${req// }" ] || continue
       handle "$who" "$req"
-    done < <(tail -n "+$((MARK + 1))" "$SERVER_LOG" | tr -d '\r')
+    done < <(tail -n "+$((MARK + 1))" "$SERVER_LOG" | tr -d '\r' | sanitize)
     MARK="$CUR"
   fi
   sleep 2
