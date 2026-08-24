@@ -113,16 +113,38 @@ from your interactive sessions — neither can hijack the other. You can join th
 conversation yourself:
 
 ```bash
-cd /path/to/terraria-beyond-sandboxing && claude    # then /resume
+cd /path/to/terraria-beyond-sandboxing && ./resume.sh
 ```
 
-Don't drive it from both sides at once.
+`/resume` will not find it — see [Joining the conversation
+yourself](#joining-the-conversation-yourself) below. Don't drive it from both
+sides at once.
 
 ## Threading
 
 One shared thread for everyone, reused via `--continue`, rotating to a fresh
 session after `IDLE_ROTATE` (4h default). Everyone shares context, so players
 can see what each other asked.
+
+### Joining the conversation yourself
+
+`/resume` will not show you this thread. Its picker is built from
+`~/.claude/history.jsonl`, which records prompts **typed** at the REPL; the
+bridge speaks to Claude with `claude -p`, so nothing it sends is ever written
+there. The conversation is invisible in the picker in every project, including
+under ctrl+A ("show all projects"). The transcript itself is perfectly normal —
+it just has to be resumed by session id:
+
+```bash
+./resume.sh                # newest bridge session
+./resume.sh --safe-mode    # ...without this repo's gate hook
+```
+
+Two things to expect. You and the bridge **share one thread**, so your turns
+become context for the next in-game `!`. And resuming inside this checkout
+activates `.claude/settings.json`, so *your* tool calls are announced in
+Terraria chat and wait out the veto window too — `--safe-mode` skips the hook,
+and `./stop.sh` gives you the conversation to yourself.
 
 ## What the gate actually does
 
@@ -216,6 +238,7 @@ to the prompt, **not** an access check.
 | `bridge.sh` | Main loop: watch chat, dispatch, reply |
 | `hooks/gate.sh` | PreToolUse veto gate |
 | `preflight.sh` | Dependency and config check |
+| `resume.sh` | Open the bridge's conversation in your terminal |
 | `logs/gate.log` | Every tool decision — the audit trail |
 | `logs/bridge.log` | Requests and replies |
 
